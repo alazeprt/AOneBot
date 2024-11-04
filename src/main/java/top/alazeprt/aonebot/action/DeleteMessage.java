@@ -1,5 +1,7 @@
 package top.alazeprt.aonebot.action;
 
+import top.alazeprt.aonebot.util.MapUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +18,7 @@ public class DeleteMessage extends PostAction {
     public String getData() {
         Map<String, Object> map = new HashMap<>();
         map.put("action", "delete_msg");
-        map.put("params", Map.of("message_id", messageId));
+        map.put("params", MapUtil.of("message_id", messageId));
         map.put("echo", "aob_" + System.currentTimeMillis()%10000);
         return gson.toJson(map);
     }

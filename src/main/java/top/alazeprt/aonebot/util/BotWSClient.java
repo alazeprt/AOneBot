@@ -65,20 +65,21 @@ public class BotWSClient extends WebSocketClient {
         } else if (jsonObject.get("post_type").getAsString().equals("meta_event")) {
             long time = jsonObject.get("time").getAsLong();
             switch (jsonObject.get("meta_event_type").getAsString()) {
-                case "heartbeat" -> {
+                case "heartbeat":
                     JsonObject status = jsonObject.getAsJsonObject("status");
                     postEvent(new HeartbeatEvent(time,
                             status.get("online").getAsBoolean(),
                             status.get("good").getAsBoolean()));
-                }
-                case "lifecycle" -> {
+                    break;
+                case "lifecycle":
                     postEvent(new LifecycleEvent(time, LifecycleType.valueOf(jsonObject.get("sub_type").getAsString().toUpperCase())));
-                }
+                    break;
             }
         } else if (jsonObject.get("post_type").getAsString().equals("message")) {
             long time = jsonObject.get("time").getAsLong();
             switch (jsonObject.get("message_type").getAsString()) {
-                case "private" -> postEvent(new PrivateMessageEvent(time,
+                case "private":
+                    postEvent(new PrivateMessageEvent(time,
                         PrivateMessageType.valueOf(jsonObject.get("sub_type").getAsString().toUpperCase()),
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("message_id").getAsLong(),
@@ -87,7 +88,9 @@ public class BotWSClient extends WebSocketClient {
                         jsonObject.get("font").getAsInt(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("sender").getAsJsonObject().get("nickname").getAsString()));
-                case "group" -> postEvent(new GroupMessageEvent(time,
+                    break;
+                case "group":
+                    postEvent(new GroupMessageEvent(time,
                         GroupMessageType.valueOf(jsonObject.get("sub_type").getAsString().toUpperCase()),
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("message_id").getAsLong(),
@@ -99,72 +102,93 @@ public class BotWSClient extends WebSocketClient {
                         jsonObject.get("font").getAsInt(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("sender").getAsJsonObject().get("nickname").getAsString()));
+                    break;
             }
         } else if (jsonObject.get("post_type").getAsString().equals("notice")) {
             long time = jsonObject.get("time").getAsLong();
             switch (jsonObject.get("notice_type").getAsString()) {
-                case "group_upload" -> postEvent(new GroupUploadEvent(time,
+                case "group_upload":
+                    postEvent(new GroupUploadEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("group_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("file").getAsJsonObject().get("id").getAsString(),
                         jsonObject.get("file").getAsJsonObject().get("name").getAsString(),
                         jsonObject.get("file").getAsJsonObject().get("size").getAsLong()));
-                case "group_admin" -> postEvent(new GroupAdminEvent(time,
+                    break;
+                case "group_admin":
+                    postEvent(new GroupAdminEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("group_id").getAsLong(),
                         jsonObject.get("sub_type").getAsString().equals("set") ? SET : UNSET));
-                case "group_decrease" -> postEvent(new GroupMemberDecreaseEvent(time,
+                    break;
+                case "group_decrease":
+                    postEvent(new GroupMemberDecreaseEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("group_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("operator_id").getAsLong(),
                         jsonObject.get("sub_type").getAsString().equals("leave") ? LEAVE : KICK));
-                case "group_increase" -> postEvent(new GroupMemberIncreaseEvent(time,
+                    break;
+                case "group_increase":
+                    postEvent(new GroupMemberIncreaseEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("group_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("operator_id").getAsLong(),
                         jsonObject.get("sub_type").getAsString().equals("invite") ? INVITE : APPROVE));
-                case "group_ban" -> postEvent(new GroupBanEvent(time,
+                    break;
+                case "group_ban":
+                    postEvent(new GroupBanEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("group_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("operator_id").getAsLong(),
                         jsonObject.get("duration").getAsLong(),
                         jsonObject.get("sub_type").getAsString().equals("ban") ? BAN : LIFT_BAN));
-                case "group_recall" -> postEvent(new GroupRecallEvent(time,
+                    break;
+                case "group_recall":
+                    postEvent(new GroupRecallEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("group_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("message_id").getAsLong(),
                         jsonObject.get("operator_id").getAsLong()));
-                case "friend_recall" -> postEvent(new FriendRecallEvent(time,
+                    break;
+                case "friend_recall":
+                    postEvent(new FriendRecallEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("message_id").getAsLong()));
-                case "poke" -> postEvent(new PokeEvent(time,
+                    break;
+                case "poke":
+                    postEvent(new PokeEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("group_id").getAsLong(),
                         jsonObject.get("target_id").getAsLong()));
+                break;
             }
         } else if (jsonObject.get("post_type").getAsString().equals("request")) {
             long time = jsonObject.get("time").getAsLong();
             switch (jsonObject.get("request_type").getAsString()) {
-                case "friend" -> postEvent(new FriendRequestEvent(time,
+                case "friend":
+                    postEvent(new FriendRequestEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("comment").getAsString(),
                         jsonObject.get("flag").getAsString()));
-                case "group" -> postEvent(new GroupRequestEvent(time,
+                    break;
+                case "group":
+                    postEvent(new GroupRequestEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("group_id").getAsLong(),
                         jsonObject.get("comment").getAsString(),
                         jsonObject.get("flag").getAsString(),
                         jsonObject.get("sub_type").getAsString().equals("add") ? ADD : GroupRequestType.INVITE));
+                    break;
             }
         }
         Object toRemove = null;
@@ -187,11 +211,12 @@ public class BotWSClient extends WebSocketClient {
     }
 
     private void postEvent(Event event) {
+        System.out.println(event.getClass().getTypeName());
         for (Listener clazz : eventClassList) {
             for (Method method : clazz.getClass().getDeclaredMethods()) {
                 if (method.isAnnotationPresent(SubscribeBotEvent.class)) {
-                    if (method.getParameters().length != 1) return;
-                    if (!event.getClass().getTypeName().equals(method.getParameters()[0].getParameterizedType().getTypeName())) return;
+                    if (method.getParameters().length != 1) continue;
+                    if (!event.getClass().getTypeName().equals(method.getParameters()[0].getParameterizedType().getTypeName())) continue;
                     try {
                         method.invoke(clazz, event);
                     } catch (IllegalAccessException | InvocationTargetException e) {

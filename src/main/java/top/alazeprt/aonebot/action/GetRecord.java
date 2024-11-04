@@ -1,5 +1,7 @@
 package top.alazeprt.aonebot.action;
 
+import top.alazeprt.aonebot.util.MapUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +20,7 @@ public class GetRecord extends GetAction {
     public String getData() {
         Map<String, Object> map = new HashMap<>();
         map.put("action", "get_record");
-        map.put("params", Map.of("file", file, "output_format", outputFormat));
+        map.put("params", MapUtil.of("file", file, "output_format", outputFormat));
         map.put("echo", "aob_" + System.currentTimeMillis()%10000);
         return gson.toJson(map);
     }

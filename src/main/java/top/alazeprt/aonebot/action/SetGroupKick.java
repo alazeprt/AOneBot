@@ -1,5 +1,7 @@
 package top.alazeprt.aonebot.action;
 
+import top.alazeprt.aonebot.util.MapUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +28,7 @@ public class SetGroupKick extends PostAction {
     public String getData() {
         Map<String, Object> map = new HashMap<>();
         map.put("action", "set_group_kick");
-        map.put("params", Map.of("group_id", groupId, "user_id", userId, "reject_add_request", rejectAddRequest));
+        map.put("params", MapUtil.of("group_id", groupId, "user_id", userId, "reject_add_request", rejectAddRequest));
         map.put("echo", "aob_" + System.currentTimeMillis()%10000);
         return gson.toJson(map);
     }

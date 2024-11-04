@@ -11,11 +11,17 @@ public enum GroupRole {
     }
 
     public static GroupRole fromName(String name) {
-        return switch (name.toUpperCase()) {
-            case "OWNER" -> OWNER;
-            case "ADMIN", "ADMINISTRATOR" -> ADMIN;
-            case "MEMBER", "DEFAULT" -> MEMBER;
-            default -> null;
-        };
+        switch (name.toUpperCase()) {
+            case "OWNER":
+                return OWNER;
+            case "ADMIN":
+            case "ADMINISTRATOR":
+                return ADMIN;
+            case "MEMBER":
+            case "DEFAULT":
+                return MEMBER;
+            default:
+                return null;
+        }
     }
 }

@@ -1,5 +1,7 @@
 package top.alazeprt.aonebot.action;
 
+import top.alazeprt.aonebot.util.MapUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +18,7 @@ public class GetImage extends GetAction {
     public String getData() {
         Map<String, Object> map = new HashMap<>();
         map.put("action", "get_image");
-        map.put("params", Map.of("file", file));
+        map.put("params", MapUtil.of("file", file));
         map.put("echo", "aob_" + System.currentTimeMillis()%10000);
         return gson.toJson(map);
     }

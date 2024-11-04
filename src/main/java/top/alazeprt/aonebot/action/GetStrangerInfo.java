@@ -1,5 +1,7 @@
 package top.alazeprt.aonebot.action;
 
+import top.alazeprt.aonebot.util.MapUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +25,7 @@ public class GetStrangerInfo extends GetAction {
     public String getData() {
         Map<String, Object> map = new HashMap<>();
         map.put("action", "get_stranger_info");
-        map.put("params", Map.of("user_id", userId, "no_cache", noCache));
+        map.put("params", MapUtil.of("user_id", userId, "no_cache", noCache));
         map.put("echo", "aob_" + System.currentTimeMillis()%10000);
         return gson.toJson(map);
     }
