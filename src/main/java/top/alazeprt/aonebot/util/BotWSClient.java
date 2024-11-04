@@ -13,6 +13,10 @@ import top.alazeprt.aonebot.event.meta.HeartbeatEvent;
 import top.alazeprt.aonebot.event.SubscribeBotEvent;
 import top.alazeprt.aonebot.event.meta.LifecycleEvent;
 import top.alazeprt.aonebot.event.meta.LifecycleType;
+import top.alazeprt.aonebot.event.notice.*;
+import top.alazeprt.aonebot.event.request.FriendRequestEvent;
+import top.alazeprt.aonebot.event.request.GroupRequestEvent;
+import top.alazeprt.aonebot.event.request.GroupRequestType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,6 +29,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
 import static top.alazeprt.aonebot.BotClient.gson;
+import static top.alazeprt.aonebot.event.notice.AdminChangeType.SET;
+import static top.alazeprt.aonebot.event.notice.AdminChangeType.UNSET;
+import static top.alazeprt.aonebot.event.notice.BanType.BAN;
+import static top.alazeprt.aonebot.event.notice.BanType.LIFT_BAN;
+import static top.alazeprt.aonebot.event.notice.MemberDecreaseType.KICK;
+import static top.alazeprt.aonebot.event.notice.MemberDecreaseType.LEAVE;
+import static top.alazeprt.aonebot.event.notice.MemberIncreaseType.APPROVE;
+import static top.alazeprt.aonebot.event.notice.MemberIncreaseType.INVITE;
+import static top.alazeprt.aonebot.event.request.GroupRequestType.ADD;
 
 public class BotWSClient extends WebSocketClient {
 
@@ -86,6 +99,72 @@ public class BotWSClient extends WebSocketClient {
                         jsonObject.get("font").getAsInt(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("sender").getAsJsonObject().get("nickname").getAsString()));
+            }
+        } else if (jsonObject.get("post_type").getAsString().equals("notice")) {
+            long time = jsonObject.get("time").getAsLong();
+            switch (jsonObject.get("notice_type").getAsString()) {
+                case "group_upload" -> postEvent(new GroupUploadEvent(time,
+                        jsonObject.get("self_id").getAsLong(),
+                        jsonObject.get("group_id").getAsLong(),
+                        jsonObject.get("user_id").getAsLong(),
+                        jsonObject.get("file").getAsJsonObject().get("id").getAsString(),
+                        jsonObject.get("file").getAsJsonObject().get("name").getAsString(),
+                        jsonObject.get("file").getAsJsonObject().get("size").getAsLong()));
+                case "group_admin" -> postEvent(new GroupAdminEvent(time,
+                        jsonObject.get("self_id").getAsLong(),
+                        jsonObject.get("user_id").getAsLong(),
+                        jsonObject.get("group_id").getAsLong(),
+                        jsonObject.get("sub_type").getAsString().equals("set") ? SET : UNSET));
+                case "group_decrease" -> postEvent(new GroupMemberDecreaseEvent(time,
+                        jsonObject.get("self_id").getAsLong(),
+                        jsonObject.get("group_id").getAsLong(),
+                        jsonObject.get("user_id").getAsLong(),
+                        jsonObject.get("operator_id").getAsLong(),
+                        jsonObject.get("sub_type").getAsString().equals("leave") ? LEAVE : KICK));
+                case "group_increase" -> postEvent(new GroupMemberIncreaseEvent(time,
+                        jsonObject.get("self_id").getAsLong(),
+                        jsonObject.get("group_id").getAsLong(),
+                        jsonObject.get("user_id").getAsLong(),
+                        jsonObject.get("operator_id").getAsLong(),
+                        jsonObject.get("sub_type").getAsString().equals("invite") ? INVITE : APPROVE));
+                case "group_ban" -> postEvent(new GroupBanEvent(time,
+                        jsonObject.get("self_id").getAsLong(),
+                        jsonObject.get("group_id").getAsLong(),
+                        jsonObject.get("user_id").getAsLong(),
+                        jsonObject.get("operator_id").getAsLong(),
+                        jsonObject.get("duration").getAsLong(),
+                        jsonObject.get("sub_type").getAsString().equals("ban") ? BAN : LIFT_BAN));
+                case "group_recall" -> postEvent(new GroupRecallEvent(time,
+                        jsonObject.get("self_id").getAsLong(),
+                        jsonObject.get("group_id").getAsLong(),
+                        jsonObject.get("user_id").getAsLong(),
+                        jsonObject.get("message_id").getAsLong(),
+                        jsonObject.get("operator_id").getAsLong()));
+                case "friend_recall" -> postEvent(new FriendRecallEvent(time,
+                        jsonObject.get("self_id").getAsLong(),
+                        jsonObject.get("user_id").getAsLong(),
+                        jsonObject.get("message_id").getAsLong()));
+                case "poke" -> postEvent(new PokeEvent(time,
+                        jsonObject.get("self_id").getAsLong(),
+                        jsonObject.get("user_id").getAsLong(),
+                        jsonObject.get("group_id").getAsLong(),
+                        jsonObject.get("target_id").getAsLong()));
+            }
+        } else if (jsonObject.get("post_type").getAsString().equals("request")) {
+            long time = jsonObject.get("time").getAsLong();
+            switch (jsonObject.get("request_type").getAsString()) {
+                case "friend" -> postEvent(new FriendRequestEvent(time,
+                        jsonObject.get("self_id").getAsLong(),
+                        jsonObject.get("user_id").getAsLong(),
+                        jsonObject.get("comment").getAsString(),
+                        jsonObject.get("flag").getAsString()));
+                case "group" -> postEvent(new GroupRequestEvent(time,
+                        jsonObject.get("self_id").getAsLong(),
+                        jsonObject.get("user_id").getAsLong(),
+                        jsonObject.get("group_id").getAsLong(),
+                        jsonObject.get("comment").getAsString(),
+                        jsonObject.get("flag").getAsString(),
+                        jsonObject.get("sub_type").getAsString().equals("add") ? ADD : GroupRequestType.INVITE));
             }
         }
         Object toRemove = null;
