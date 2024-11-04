@@ -1,5 +1,7 @@
 plugins {
     id("java")
+    id("maven-publish")
+    id("com.gradleup.shadow") version "8.3.5"
 }
 
 group = "top.alazeprt.aonebot"
@@ -17,6 +19,4 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-    withSourcesJar()
-    withJavadocJar()
 }
