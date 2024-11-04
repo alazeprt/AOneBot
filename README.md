@@ -39,20 +39,20 @@ Maven (pom.xml):
     <dependency>
         <groupId>com.github.alazeprt</groupId>
         <artifactId>AOneBot</artifactId>
-        <version>1.0-beta</version>
+        <version>1.0.1-beta</version>
     </dependency>
 </dependencies>
 ```
 Gradle (build.gradle):
 ```groovy
 dependencies {
-    implementation 'com.github.alazeprt:AOneBot:1.0-beta'
+    implementation 'com.github.alazeprt:AOneBot:1.0.1-beta'
 }
 ```
 Gradle (build.gradle.kts):
 ```kotlin
 dependencies {
-    implementation("com.github.alazeprt:AOneBot:1.0-beta")
+    implementation("com.github.alazeprt:AOneBot:1.0.1-beta")
 }
 ```
 ### 3. 开始使用
