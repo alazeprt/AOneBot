@@ -6,6 +6,7 @@ import top.alazeprt.aonebot.action.Action;
 import top.alazeprt.aonebot.action.GetAction;
 import top.alazeprt.aonebot.event.Listener;
 import top.alazeprt.aonebot.util.BotWSClient;
+import top.alazeprt.aonebot.util.ConsumerWithType;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -64,9 +65,10 @@ public class BotClient {
         send(action.getData());
     }
 
-    public void action(GetAction action, Consumer<JsonObject> consumer) {
+    public <T> void action(GetAction<T> action, Consumer<T> consumer) {
         String data = action.getData();
-        client.consumerMap.put(gson.fromJson(data, JsonObject.class).get("echo").getAsString(), consumer);
+        ConsumerWithType<T> consumerWithType = new ConsumerWithType<>(action.getClazz(), consumer);
+        client.consumerMap.put(gson.fromJson(data, JsonObject.class).get("echo").getAsString(), consumerWithType);
         send(data);
     }
 

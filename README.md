@@ -71,8 +71,8 @@ client.connect();
 连接完毕后，你就可以通过 `action()` 方法来执行操作了：
 ```java
 client.action(new SendGroupMessage(123456, "Hello World!")); // 向id为123456的群发送Hello World!
-client.action(new GetGroupList(), (jsonObject) -> { // 获取当前登录账号的所有群组，并在获取完成后执行遍历操作
-    for (Group group : GroupList.fromJson(jsonObject)) { // 通过GroupList解析群组列表并遍历
+client.action(new GetGroupList(), (groupList) -> { // 获取当前登录账号的所有群组的列表
+    for (Group group : groupList) { // 遍历群组列表
         System.out.println(group.getGroupName()); // 输出群名
     }
 });

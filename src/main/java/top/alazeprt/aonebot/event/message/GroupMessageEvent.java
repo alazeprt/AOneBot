@@ -1,7 +1,6 @@
 package top.alazeprt.aonebot.event.message;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import top.alazeprt.aonebot.event.Event;
 
 public class GroupMessageEvent extends Event {

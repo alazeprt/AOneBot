@@ -5,12 +5,12 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import top.alazeprt.aonebot.event.Event;
 import top.alazeprt.aonebot.event.Listener;
+import top.alazeprt.aonebot.event.SubscribeBotEvent;
 import top.alazeprt.aonebot.event.message.GroupMessageEvent;
 import top.alazeprt.aonebot.event.message.GroupMessageType;
 import top.alazeprt.aonebot.event.message.PrivateMessageEvent;
 import top.alazeprt.aonebot.event.message.PrivateMessageType;
 import top.alazeprt.aonebot.event.meta.HeartbeatEvent;
-import top.alazeprt.aonebot.event.SubscribeBotEvent;
 import top.alazeprt.aonebot.event.meta.LifecycleEvent;
 import top.alazeprt.aonebot.event.meta.LifecycleType;
 import top.alazeprt.aonebot.event.notice.*;
@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.function.Consumer;
 
 import static top.alazeprt.aonebot.BotClient.gson;
 import static top.alazeprt.aonebot.event.notice.AdminChangeType.SET;
@@ -41,7 +40,7 @@ import static top.alazeprt.aonebot.event.request.GroupRequestType.ADD;
 
 public class BotWSClient extends WebSocketClient {
 
-    public Map<String, Consumer<JsonObject>> consumerMap = new HashMap<>();
+    public Map<String, ConsumerWithType<?>> consumerMap = new HashMap<>();
     public List<Listener> eventClassList = new ArrayList<>();
 
     public CountDownLatch latch = new CountDownLatch(1);
@@ -58,8 +57,6 @@ public class BotWSClient extends WebSocketClient {
     @Override
     public void onMessage(String s) {
         JsonObject jsonObject = gson.fromJson(s, JsonObject.class);
-        System.out.println(s);
-
         if (jsonObject.get("post_type") == null) {
 
         } else if (jsonObject.get("post_type").getAsString().equals("meta_event")) {
@@ -192,9 +189,10 @@ public class BotWSClient extends WebSocketClient {
             }
         }
         Object toRemove = null;
-        for (Map.Entry<String, Consumer<JsonObject>> entry : consumerMap.entrySet()) {
+        for (Map.Entry<String, ConsumerWithType<?>> entry : consumerMap.entrySet()) {
             if (jsonObject.get("echo") != null && entry.getKey().equals(jsonObject.get("echo").getAsString())) {
-                entry.getValue().accept(jsonObject);
+                ConsumerWithType<?> consumerWithType = entry.getValue();
+                consumerWithType.accept(jsonObject);
                 toRemove = entry.getKey();
             }
         }
@@ -211,7 +209,6 @@ public class BotWSClient extends WebSocketClient {
     }
 
     private void postEvent(Event event) {
-        System.out.println(event.getClass().getTypeName());
         for (Listener clazz : eventClassList) {
             for (Method method : clazz.getClass().getDeclaredMethods()) {
                 if (method.isAnnotationPresent(SubscribeBotEvent.class)) {

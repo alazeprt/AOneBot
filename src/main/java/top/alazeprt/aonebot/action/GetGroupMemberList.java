@@ -1,5 +1,6 @@
 package top.alazeprt.aonebot.action;
 
+import top.alazeprt.aonebot.result.GroupMemberList;
 import top.alazeprt.aonebot.util.MapUtil;
 
 import java.util.HashMap;
@@ -7,7 +8,7 @@ import java.util.Map;
 
 import static top.alazeprt.aonebot.BotClient.gson;
 
-public class GetGroupMemberList extends GetAction {
+public class GetGroupMemberList extends GetAction<GroupMemberList> {
     private final long groupId;
 
     public GetGroupMemberList(long groupId) {
@@ -21,5 +22,10 @@ public class GetGroupMemberList extends GetAction {
         map.put("params", MapUtil.of("group_id", groupId));
         map.put("echo", "aob_" + System.currentTimeMillis()%10000);
         return gson.toJson(map);
+    }
+
+    @Override
+    public Class<GroupMemberList> getClazz() {
+        return GroupMemberList.class;
     }
 }
