@@ -174,7 +174,7 @@ public class BotWSClient extends WebSocketClient {
                     postEvent(new FriendRequestEvent(time,
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
-                        jsonObject.get("comment").getAsString(),
+                        jsonObject.get("comment").isJsonNull() ? "" : jsonObject.get("comment").getAsString(),
                         jsonObject.get("flag").getAsString()));
                     break;
                 case "group":
@@ -182,7 +182,7 @@ public class BotWSClient extends WebSocketClient {
                         jsonObject.get("self_id").getAsLong(),
                         jsonObject.get("user_id").getAsLong(),
                         jsonObject.get("group_id").getAsLong(),
-                        jsonObject.get("comment").getAsString(),
+                        jsonObject.get("comment").isJsonNull() ? "" : jsonObject.get("comment").getAsString(),
                         jsonObject.get("flag").getAsString(),
                         jsonObject.get("sub_type").getAsString().equals("add") ? ADD : GroupRequestType.INVITE));
                     break;
