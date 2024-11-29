@@ -205,6 +205,7 @@ public class BotWSClient extends WebSocketClient {
 
     @Override
     public void onError(Exception e) {
+        if (!this.isOpen()) latch.countDown();
         e.printStackTrace();
     }
 
