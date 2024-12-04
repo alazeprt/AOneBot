@@ -93,7 +93,7 @@ public class BotWSClient extends WebSocketClient {
                         jsonObject.get("message_id").getAsLong(),
                         jsonObject.get("group_id").getAsLong(),
                         jsonObject.get("anonymous") == null ? -1L : (jsonObject.get("anonymous").isJsonNull() ? -1L : jsonObject.get("anonymous").getAsJsonObject().get("id").getAsLong()),
-                        jsonObject.get("anonymous") == null ? -1L : (jsonObject.get("anonymous").isJsonNull() ? null : jsonObject.getAsJsonObject("anonymous").get("name").getAsString()),
+                        jsonObject.get("anonymous") == null ? null : (jsonObject.get("anonymous").isJsonNull() ? null : jsonObject.getAsJsonObject("anonymous").get("name").getAsString()),
                         jsonObject.getAsJsonArray("message"),
                         jsonObject.get("raw_message").getAsString(),
                         jsonObject.get("font").getAsInt(),
