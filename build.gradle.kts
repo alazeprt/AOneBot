@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "top.alazeprt.aonebot"
-version = "1.0.3-beta"
+version = "1.0.4-beta"
 
 repositories {
     mavenCentral()
