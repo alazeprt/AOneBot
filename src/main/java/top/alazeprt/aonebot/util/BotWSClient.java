@@ -56,6 +56,7 @@ public class BotWSClient extends WebSocketClient {
 
     @Override
     public void onMessage(String s) {
+        System.out.println(s);
         JsonObject jsonObject = gson.fromJson(s, JsonObject.class);
         if (jsonObject.get("post_type") == null) {
 
