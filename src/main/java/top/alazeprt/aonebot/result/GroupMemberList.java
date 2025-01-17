@@ -12,9 +12,7 @@ public class GroupMemberList extends ArrayList<GroupMember> {
 
     public static GroupMemberList fromJson(JsonObject jsonObject) {
         GroupMemberList list = new GroupMemberList();
-        if (!jsonObject.get("status").getAsString().equalsIgnoreCase("ok")) {
-            return list;
-        }
+        if (jsonObject.get("data").isJsonNull()) return null;
         for (JsonElement element : jsonObject.getAsJsonArray("data").asList()) {
             JsonObject elementObject = element.getAsJsonObject();
             JsonObject newObject = new JsonObject();

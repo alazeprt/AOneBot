@@ -69,9 +69,7 @@ public class GroupMember {
     }
 
     public static GroupMember fromJson(JsonObject jsonObject) {
-        if (!jsonObject.get("status").getAsString().equalsIgnoreCase("ok")) {
-            return null;
-        }
+        if (jsonObject.get("data").isJsonNull()) return null;
         jsonObject = jsonObject.get("data").getAsJsonObject();
         long groupId = jsonObject.get("group_id").getAsLong();
         long userId = jsonObject.get("user_id").getAsLong();
