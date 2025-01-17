@@ -32,6 +32,9 @@ public class Group {
     }
 
     public static Group fromJson(JsonObject jsonObject) {
+        if (!jsonObject.get("status").getAsString().equalsIgnoreCase("ok")) {
+            return null;
+        }
         jsonObject = jsonObject.get("data").getAsJsonObject();
         long groupId = jsonObject.get("group_id").getAsLong();
         String groupName = jsonObject.get("group_name").getAsString();

@@ -12,6 +12,9 @@ public class GroupList extends ArrayList<Group> {
 
     public static GroupList fromJson(JsonObject jsonObject) {
         GroupList list = new GroupList();
+        if (!jsonObject.get("status").getAsString().equalsIgnoreCase("ok")) {
+            return list;
+        }
         for (JsonElement element : jsonObject.getAsJsonArray("data").asList()) {
             JsonObject elementObject = element.getAsJsonObject();
             JsonObject newObject = new JsonObject();

@@ -12,6 +12,9 @@ public class LoginInfo {
     }
 
     public static LoginInfo fromJson(JsonObject jsonObject) {
+        if (!jsonObject.get("status").getAsString().equalsIgnoreCase("ok")) {
+            return null;
+        }
         jsonObject = jsonObject.get("data").getAsJsonObject();
         long userId = jsonObject.get("user_id").getAsLong();
         String nickname = jsonObject.get("nickname").getAsString();
