@@ -5,7 +5,7 @@ import top.alazeprt.aonebot.util.MapUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import static top.alazeprt.aonebot.BotClient.gson;
+import static top.alazeprt.aonebot.client.websocket.WebsocketBotClient.gson;
 
 public class SetGroupBan extends PostAction {
     private final long groupId;

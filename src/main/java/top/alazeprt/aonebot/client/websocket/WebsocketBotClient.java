@@ -1,44 +1,51 @@
-package top.alazeprt.aonebot;
+package top.alazeprt.aonebot.client.websocket;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import top.alazeprt.aonebot.action.Action;
 import top.alazeprt.aonebot.action.GetAction;
+import top.alazeprt.aonebot.client.BotClient;
+import top.alazeprt.aonebot.client.MessageHandler;
 import top.alazeprt.aonebot.event.Listener;
-import top.alazeprt.aonebot.util.BotWSClient;
 import top.alazeprt.aonebot.util.ConsumerWithType;
+import top.alazeprt.aonebot.util.MapUtil;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 import java.util.function.Consumer;
 
-public class BotClient {
+public class WebsocketBotClient implements BotClient {
     private final URI uri;
-    private BotWSClient client;
+    private WSClient client;
     private String accessToken;
 
     public static final Gson gson = new Gson();
 
-    public BotClient(URI uri) {
+    public WebsocketBotClient(URI uri) {
         this.uri = uri;
     }
 
-    public BotClient(String address, int port) throws URISyntaxException {
+    public WebsocketBotClient(String address, int port) throws URISyntaxException {
         this.uri = new URI("ws://" + address + ":" + port);
     }
 
-    public BotClient(URI uri, String accessToken) {
+    public WebsocketBotClient(URI uri, String accessToken) {
         this.uri = uri;
         this.accessToken = accessToken;
     }
 
-    public BotClient(String address, int port, String accessToken) throws URISyntaxException {
+    public WebsocketBotClient(String address, int port, String accessToken) throws URISyntaxException {
         this.uri = new URI("ws://" + address + ":" + port);
         this.accessToken = accessToken;
     }
 
     public void connect() {
-        client = new BotWSClient(uri);
+        if (accessToken == null) {
+            client = new WSClient(uri);
+        } else {
+            client = new WSClient(uri, MapUtil.of("Authorization", "Bearer " + accessToken));
+        }
         client.connect();
         try {
             client.latch.await();
@@ -49,7 +56,6 @@ public class BotClient {
 
     private void send(String data) {
         if (client != null) {
-            if (accessToken != null) client.addHeader("Authorization", "Bearer " + accessToken);
             client.send(data);
         } else {
             throw new IllegalStateException("Client not connected");
@@ -61,10 +67,12 @@ public class BotClient {
         client = null;
     }
 
+    @Override
     public void action(Action action) {
         send(action.getData());
     }
 
+    @Override
     public <T> void action(GetAction<T> action, Consumer<T> consumer) {
         String data = action.getData();
         ConsumerWithType<T> consumerWithType = new ConsumerWithType<>(action.getClazz(), consumer);
@@ -72,8 +80,9 @@ public class BotClient {
         send(data);
     }
 
+    @Override
     public void registerEvent(Listener listener) {
-        client.eventClassList.add(listener);
+        MessageHandler.eventClassList.add(listener);
     }
 
     public boolean isConnected() {

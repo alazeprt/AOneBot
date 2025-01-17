@@ -5,7 +5,7 @@ import top.alazeprt.aonebot.result.Status;
 import java.util.HashMap;
 import java.util.Map;
 
-import static top.alazeprt.aonebot.BotClient.gson;
+import static top.alazeprt.aonebot.client.websocket.WebsocketBotClient.gson;
 
 public class GetStatus extends GetAction<Status> {
     @Override

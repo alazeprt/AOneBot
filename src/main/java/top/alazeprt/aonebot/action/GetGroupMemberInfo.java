@@ -6,7 +6,7 @@ import top.alazeprt.aonebot.util.MapUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import static top.alazeprt.aonebot.BotClient.gson;
+import static top.alazeprt.aonebot.client.websocket.WebsocketBotClient.gson;
 
 public class GetGroupMemberInfo extends GetAction<GroupMember> {
     private final long groupId;
