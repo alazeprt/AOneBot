@@ -1,6 +1,7 @@
 package top.alazeprt.aonebot.client;
 
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
 import top.alazeprt.aonebot.event.Event;
 import top.alazeprt.aonebot.event.Listener;
 import top.alazeprt.aonebot.event.SubscribeBotEvent;
@@ -34,7 +35,10 @@ import static top.alazeprt.aonebot.event.request.GroupRequestType.ADD;
 public class MessageHandler {
     public static List<Listener> eventClassList = new ArrayList<>();
 
+    public static Logger logger;
+
     public static Event handle(JsonObject jsonObject) {
+        if (logger != null) logger.debug("Received message: " + jsonObject.toString());
         if (jsonObject.get("post_type") == null) {
             return null;
         } else if (jsonObject.get("post_type").getAsString().equals("meta_event")) {
@@ -175,6 +179,7 @@ public class MessageHandler {
                 if (method.isAnnotationPresent(SubscribeBotEvent.class)) {
                     if (method.getParameters().length != 1) continue;
                     if (!event.getClass().getTypeName().equals(method.getParameters()[0].getParameterizedType().getTypeName())) continue;
+                    if (logger != null) logger.debug("Invoking method " + method.getName() + " of class " + clazz.getClass().getName() + " with event " + event.getClass().getTypeName());
                     try {
                         method.invoke(clazz, event);
                     } catch (IllegalAccessException | InvocationTargetException e) {

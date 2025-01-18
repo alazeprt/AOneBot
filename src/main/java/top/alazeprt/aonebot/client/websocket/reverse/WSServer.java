@@ -7,11 +7,11 @@ import org.java_websocket.exceptions.InvalidDataException;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.handshake.ServerHandshakeBuilder;
 import org.java_websocket.server.WebSocketServer;
+import org.slf4j.Logger;
 import top.alazeprt.aonebot.client.MessageHandler;
 import top.alazeprt.aonebot.util.ConsumerWithType;
 
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -26,14 +26,18 @@ class WSServer extends WebSocketServer {
 
     private String accessToken;
 
-    public WSServer(InetSocketAddress address, String accessToken) {
+    private Logger logger;
+
+    public WSServer(InetSocketAddress address, String accessToken, Logger logger) {
         super(address);
         this.accessToken = accessToken;
+        this.logger = logger;
     }
 
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
         latch.countDown();
+        if (logger != null) logger.info("A websocket connection has been established with " + webSocket.getRemoteSocketAddress());
     }
 
     @Override
@@ -43,7 +47,6 @@ class WSServer extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket webSocket, String s) {
-        System.out.println(s);
         JsonObject jsonObject = gson.fromJson(s, JsonObject.class);
         MessageHandler.handle(jsonObject);
         Object toRemove = null;

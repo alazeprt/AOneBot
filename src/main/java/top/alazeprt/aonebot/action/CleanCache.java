@@ -1,7 +1,5 @@
 package top.alazeprt.aonebot.action;
 
-import top.alazeprt.aonebot.util.Null;
-
 import java.util.HashMap;
 import java.util.Map;
 

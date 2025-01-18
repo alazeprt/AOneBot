@@ -1,6 +1,7 @@
 package top.alazeprt.aonebot.client.websocket.reverse;
 
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
 import top.alazeprt.aonebot.action.Action;
 import top.alazeprt.aonebot.action.GetAction;
 import top.alazeprt.aonebot.client.BotClient;
@@ -9,8 +10,6 @@ import top.alazeprt.aonebot.event.Listener;
 import top.alazeprt.aonebot.util.ConsumerWithType;
 
 import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.function.Consumer;
 
 import static top.alazeprt.aonebot.client.websocket.WebsocketBotClient.gson;
@@ -19,6 +18,7 @@ public class WebsocketReverseBotClient implements BotClient {
     private final InetSocketAddress address;
     private WSServer server;
     private String accessToken;
+    private Logger logger;
 
     public WebsocketReverseBotClient(String address, int port) {
         this.address = new InetSocketAddress(address, port);
@@ -39,7 +39,8 @@ public class WebsocketReverseBotClient implements BotClient {
     }
 
     public void start() {
-        server = new WSServer(address, accessToken);
+        if (logger != null) logger.info("Starting websocket server at " + address);
+        server = new WSServer(address, accessToken, logger);
         server.start();
         try {
            server.latch.await();
@@ -49,6 +50,7 @@ public class WebsocketReverseBotClient implements BotClient {
     }
 
     public void close() {
+        if (logger != null) logger.info("Closing websocket server at " + address);
         try {
             server.stop();
             server = null;
@@ -58,6 +60,7 @@ public class WebsocketReverseBotClient implements BotClient {
     }
 
     private void send(String data) {
+        if (logger != null) logger.info("Broadcasting data to client: " + data);
         if (server != null) {
             server.broadcast(data);
         } else {
@@ -89,5 +92,10 @@ public class WebsocketReverseBotClient implements BotClient {
 
     public boolean hasClientConnected() {
         return !server.getConnections().isEmpty();
+    }
+
+    @Override
+    public void setLogger(Logger logger) {
+        this.logger = logger;
     }
 }

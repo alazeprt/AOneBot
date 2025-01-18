@@ -2,6 +2,7 @@ package top.alazeprt.aonebot.client.websocket;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
 import top.alazeprt.aonebot.action.Action;
 import top.alazeprt.aonebot.action.GetAction;
 import top.alazeprt.aonebot.client.BotClient;
@@ -12,13 +13,13 @@ import top.alazeprt.aonebot.util.MapUtil;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public class WebsocketBotClient implements BotClient {
     private final URI uri;
     private WSClient client;
     private String accessToken;
+    private Logger logger;
 
     public static final Gson gson = new Gson();
 
@@ -41,6 +42,7 @@ public class WebsocketBotClient implements BotClient {
     }
 
     public void connect() {
+        if (logger != null) logger.info("Connecting to the websocket server at " + uri);
         if (accessToken == null) {
             client = new WSClient(uri);
         } else {
@@ -55,6 +57,7 @@ public class WebsocketBotClient implements BotClient {
     }
 
     private void send(String data) {
+        if (logger != null) logger.info("Sending data to the websocket server: " + data);
         if (client != null) {
             client.send(data);
         } else {
@@ -63,6 +66,7 @@ public class WebsocketBotClient implements BotClient {
     }
 
     public void disconnect() {
+        if (logger != null) logger.info("Disconnecting from the websocket server: " + uri);
         client.close();
         client = null;
     }
@@ -87,5 +91,11 @@ public class WebsocketBotClient implements BotClient {
 
     public boolean isConnected() {
         return client.isOpen();
+    }
+
+    @Override
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+        MessageHandler.logger = logger;
     }
 }

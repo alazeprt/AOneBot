@@ -5,13 +5,14 @@ plugins {
 }
 
 group = "top.alazeprt.aonebot"
-version = "1.0.7-alpha"
+version = "1.0.7-beta"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("org.java-websocket:Java-WebSocket:1.5.7")
     implementation("com.google.code.gson:gson:2.11.0")
 }
@@ -27,4 +28,9 @@ publishing {
             from(components["java"])
         }
     }
+}
+
+tasks.shadowJar {
+    relocate("com.google", "top.alazeprt.aonebot.lib.com.google")
+    relocate("org.java_websocket", "top.alazeprt.aonebot.lib.org.java_websocket")
 }
