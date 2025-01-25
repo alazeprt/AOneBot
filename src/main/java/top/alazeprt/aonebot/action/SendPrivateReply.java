@@ -8,12 +8,12 @@ import java.util.Map;
 import static top.alazeprt.aonebot.client.websocket.WebsocketBotClient.gson;
 
 public class SendPrivateReply extends PostAction {
-    private final long groupId;
+    private final long userId;
     private final String message;
     private final long replyFor;
 
-    public SendPrivateReply(long groupId, String message, long replyFor) {
-        this.groupId = groupId;
+    public SendPrivateReply(long userId, String message, long replyFor) {
+        this.userId = userId;
         this.message = message;
         this.replyFor = replyFor;
     }
@@ -26,7 +26,7 @@ public class SendPrivateReply extends PostAction {
 
         Map<String, Object> map = new HashMap<>();
         map.put("action", "send_private_msg");
-        map.put("params", MapUtil.of("user_id", groupId, "message", para));
+        map.put("params", MapUtil.of("user_id", userId, "message", para));
         map.put("echo", "aob_" + System.currentTimeMillis()%10000);
         return gson.toJson(map);
     }
