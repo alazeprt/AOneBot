@@ -13,7 +13,7 @@ public class GroupMemberList extends ArrayList<GroupMember> {
     public static GroupMemberList fromJson(JsonObject jsonObject) {
         GroupMemberList list = new GroupMemberList();
         if (jsonObject.get("data").isJsonNull()) return null;
-        for (JsonElement element : jsonObject.getAsJsonArray("data").asList()) {
+        for (JsonElement element : jsonObject.getAsJsonArray("data")) {
             JsonObject elementObject = element.getAsJsonObject();
             JsonObject newObject = new JsonObject();
             newObject.add("data", elementObject);

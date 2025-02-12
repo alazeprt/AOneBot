@@ -11,8 +11,10 @@ import top.alazeprt.aonebot.event.Listener;
 import top.alazeprt.aonebot.util.ConsumerWithType;
 import top.alazeprt.aonebot.util.MapUtil;
 
+import java.awt.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class WebsocketBotClient implements BotClient {
@@ -97,5 +99,9 @@ public class WebsocketBotClient implements BotClient {
     public void setLogger(Logger logger) {
         this.logger = logger;
         MessageHandler.logger = logger;
+    }
+
+    public List<Listener> getEventList() {
+        return MessageHandler.eventClassList;
     }
 }

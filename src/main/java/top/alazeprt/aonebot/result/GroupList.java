@@ -15,7 +15,7 @@ public class GroupList extends ArrayList<Group> {
         if (!jsonObject.get("status").getAsString().equalsIgnoreCase("ok")) {
             return list;
         }
-        for (JsonElement element : jsonObject.getAsJsonArray("data").asList()) {
+        for (JsonElement element : jsonObject.getAsJsonArray("data")) {
             JsonObject elementObject = element.getAsJsonObject();
             JsonObject newObject = new JsonObject();
             newObject.add("data", elementObject);
