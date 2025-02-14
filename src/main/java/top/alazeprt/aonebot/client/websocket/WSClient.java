@@ -15,7 +15,7 @@ import static top.alazeprt.aonebot.client.websocket.WebsocketBotClient.gson;
 
 class WSClient extends WebSocketClient {
 
-    public Map<String, ConsumerWithType<?>> consumerMap = new HashMap<>();
+    public final Map<String, ConsumerWithType<?>> consumerMap = new HashMap<>();
 
     public CountDownLatch latch = new CountDownLatch(1);
 
@@ -37,14 +37,16 @@ class WSClient extends WebSocketClient {
         JsonObject jsonObject = gson.fromJson(s, JsonObject.class);
         MessageHandler.handle(jsonObject);
         Object toRemove = null;
-        for (Map.Entry<String, ConsumerWithType<?>> entry : consumerMap.entrySet()) {
-            if (jsonObject.get("echo") != null && entry.getKey().equals(jsonObject.get("echo").getAsString())) {
-                ConsumerWithType<?> consumerWithType = entry.getValue();
-                consumerWithType.accept(jsonObject);
-                toRemove = entry.getKey();
+        synchronized (consumerMap) {
+            for (Map.Entry<String, ConsumerWithType<?>> entry : consumerMap.entrySet()) {
+                if (jsonObject.get("echo") != null && entry.getKey().equals(jsonObject.get("echo").getAsString())) {
+                    ConsumerWithType<?> consumerWithType = entry.getValue();
+                    consumerWithType.accept(jsonObject);
+                    toRemove = entry.getKey();
+                }
             }
-        }
-        if (toRemove != null) consumerMap.remove(toRemove);
+            if (toRemove != null) consumerMap.remove(toRemove);
+       }
     }
 
     @Override
