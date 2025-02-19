@@ -9,13 +9,14 @@ import top.alazeprt.aonebot.util.ConsumerWithType;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
 import static top.alazeprt.aonebot.client.websocket.WebsocketBotClient.gson;
 
 class WSClient extends WebSocketClient {
 
-    public final Map<String, ConsumerWithType<?>> consumerMap = new HashMap<>();
+    public final Map<String, ConsumerWithType<?>> consumerMap = new ConcurrentHashMap<>();
 
     public CountDownLatch latch = new CountDownLatch(1);
 
@@ -37,16 +38,14 @@ class WSClient extends WebSocketClient {
         JsonObject jsonObject = gson.fromJson(s, JsonObject.class);
         MessageHandler.handle(jsonObject);
         Object toRemove = null;
-        synchronized (consumerMap) {
-            for (Map.Entry<String, ConsumerWithType<?>> entry : consumerMap.entrySet()) {
-                if (jsonObject.get("echo") != null && entry.getKey().equals(jsonObject.get("echo").getAsString())) {
-                    ConsumerWithType<?> consumerWithType = entry.getValue();
-                    consumerWithType.accept(jsonObject);
-                    toRemove = entry.getKey();
-                }
+        for (Map.Entry<String, ConsumerWithType<?>> entry : consumerMap.entrySet()) {
+            if (jsonObject.get("echo") != null && entry.getKey().equals(jsonObject.get("echo").getAsString())) {
+                ConsumerWithType<?> consumerWithType = entry.getValue();
+                consumerWithType.accept(jsonObject);
+                toRemove = entry.getKey();
             }
-            if (toRemove != null) consumerMap.remove(toRemove);
-       }
+        }
+        if (toRemove != null) consumerMap.remove(toRemove);
     }
 
     @Override

@@ -14,13 +14,14 @@ import top.alazeprt.aonebot.util.ConsumerWithType;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
 import static top.alazeprt.aonebot.client.websocket.WebsocketBotClient.gson;
 
 class WSServer extends WebSocketServer {
 
-    public Map<String, ConsumerWithType<?>> consumerMap = new HashMap<>();
+    public Map<String, ConsumerWithType<?>> consumerMap = new ConcurrentHashMap<>();
 
     public CountDownLatch latch = new CountDownLatch(1);
 
