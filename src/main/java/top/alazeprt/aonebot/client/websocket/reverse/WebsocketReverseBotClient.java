@@ -86,6 +86,11 @@ public class WebsocketReverseBotClient implements BotClient {
         MessageHandler.eventClassList.add(listener);
     }
 
+    @Override
+    public void unregisterEvent(Listener listener) {
+        MessageHandler.eventClassList.remove(listener);
+    }
+
     public boolean isStarted() {
         return server != null;
     }

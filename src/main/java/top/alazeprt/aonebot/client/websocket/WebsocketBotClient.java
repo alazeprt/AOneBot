@@ -15,6 +15,7 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class WebsocketBotClient implements BotClient {
@@ -43,14 +44,14 @@ public class WebsocketBotClient implements BotClient {
         this.accessToken = accessToken;
     }
 
-    public void connect() {
+    public void connect() throws InterruptedException {
         if (logger != null) logger.info("Connecting to the websocket server at " + uri);
         if (accessToken == null) {
             client = new WSClient(uri);
         } else {
             client = new WSClient(uri, MapUtil.of("Authorization", "Bearer " + accessToken));
         }
-        client.connect();
+        client.connectBlocking(5, TimeUnit.SECONDS);
         try {
             client.latch.await();
         } catch (InterruptedException e) {
@@ -89,6 +90,11 @@ public class WebsocketBotClient implements BotClient {
     @Override
     public void registerEvent(Listener listener) {
         MessageHandler.eventClassList.add(listener);
+    }
+
+    @Override
+    public void unregisterEvent(Listener listener) {
+        MessageHandler.eventClassList.remove(listener);
     }
 
     public boolean isConnected() {
