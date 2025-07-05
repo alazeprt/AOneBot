@@ -4,9 +4,11 @@ import com.google.gson.JsonObject;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import top.alazeprt.aonebot.client.MessageHandler;
+import top.alazeprt.aonebot.event.meta.WebsocketErrorEvent;
 import top.alazeprt.aonebot.util.ConsumerWithType;
 
 import java.net.URI;
+import java.sql.Time;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,7 +57,8 @@ class WSClient extends WebSocketClient {
     @Override
     public void onError(Exception e) {
         if (!this.isOpen()) latch.countDown();
-        e.printStackTrace();
+        MessageHandler.postEvent(new WebsocketErrorEvent(e));
+        throw new RuntimeException(e);
     }
 
 }

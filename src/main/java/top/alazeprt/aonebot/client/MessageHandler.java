@@ -173,7 +173,7 @@ public class MessageHandler {
         return null;
     }
 
-    private static void postEvent(Event event) {
+    public static void postEvent(Event event) {
         for (Listener clazz : eventClassList) {
             for (Method method : clazz.getClass().getDeclaredMethods()) {
                 if (method.isAnnotationPresent(SubscribeBotEvent.class)) {
