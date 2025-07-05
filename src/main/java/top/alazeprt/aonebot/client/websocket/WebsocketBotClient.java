@@ -51,7 +51,7 @@ public class WebsocketBotClient implements BotClient {
         } else {
             client = new WSClient(uri, MapUtil.of("Authorization", "Bearer " + accessToken));
         }
-        client.connectBlocking(5, TimeUnit.SECONDS);
+        client.connect();
         try {
             client.latch.await();
         } catch (InterruptedException e) {
