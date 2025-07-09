@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static top.alazeprt.aonebot.event.notice.AdminChangeType.SET;
 import static top.alazeprt.aonebot.event.notice.AdminChangeType.UNSET;
@@ -33,7 +34,7 @@ import static top.alazeprt.aonebot.event.notice.MemberIncreaseType.INVITE;
 import static top.alazeprt.aonebot.event.request.GroupRequestType.ADD;
 
 public class MessageHandler {
-    public static List<Listener> eventClassList = new ArrayList<>();
+    public static List<Listener> eventClassList = new CopyOnWriteArrayList<>();
 
     public static Logger logger;
 
