@@ -34,11 +34,15 @@ import static top.alazeprt.aonebot.event.notice.MemberIncreaseType.INVITE;
 import static top.alazeprt.aonebot.event.request.GroupRequestType.ADD;
 
 public class MessageHandler {
-    public static List<Listener> eventClassList = new CopyOnWriteArrayList<>();
+    public List<Listener> eventClassList = new CopyOnWriteArrayList<>();
 
-    public static Logger logger;
+    public Logger logger;
 
-    public static Event handle(JsonObject jsonObject) {
+    public MessageHandler() {
+
+    }
+
+    public Event handle(JsonObject jsonObject) {
         if (logger != null) logger.debug("Received message: " + jsonObject.toString());
         if (jsonObject.get("post_type") == null) {
             return null;
@@ -174,7 +178,7 @@ public class MessageHandler {
         return null;
     }
 
-    public static void postEvent(Event event) {
+    public void postEvent(Event event) {
         for (Listener clazz : eventClassList) {
             for (Method method : clazz.getClass().getDeclaredMethods()) {
                 if (method.isAnnotationPresent(SubscribeBotEvent.class)) {

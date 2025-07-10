@@ -19,6 +19,7 @@ public class WebsocketReverseBotClient implements BotClient {
     private WSServer server;
     private String accessToken;
     private Logger logger;
+    private final MessageHandler messageHandler = new MessageHandler();
 
     public WebsocketReverseBotClient(String address, int port) {
         this.address = new InetSocketAddress(address, port);
@@ -40,7 +41,7 @@ public class WebsocketReverseBotClient implements BotClient {
 
     public void start() {
         if (logger != null) logger.info("Starting websocket server at " + address);
-        server = new WSServer(address, accessToken, logger);
+        server = new WSServer(address, accessToken, logger, messageHandler);
         server.start();
         try {
            server.latch.await();
@@ -83,12 +84,12 @@ public class WebsocketReverseBotClient implements BotClient {
 
     @Override
     public void registerEvent(Listener listener) {
-        MessageHandler.eventClassList.add(listener);
+        messageHandler.eventClassList.add(listener);
     }
 
     @Override
     public void unregisterEvent(Listener listener) {
-        MessageHandler.eventClassList.remove(listener);
+        messageHandler.eventClassList.remove(listener);
     }
 
     public boolean isStarted() {

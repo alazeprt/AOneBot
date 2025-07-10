@@ -21,13 +21,17 @@ class WSClient extends WebSocketClient {
     public final Map<String, ConsumerWithType<?>> consumerMap = new ConcurrentHashMap<>();
 
     public CountDownLatch latch = new CountDownLatch(1);
+    
+    private final MessageHandler messageHandler;
 
-    public WSClient(URI serverUri) {
+    public WSClient(URI serverUri, MessageHandler messageHandler) {
         super(serverUri);
+        this.messageHandler = messageHandler;
     }
 
-    public WSClient(URI serverUri, Map<String, String> headers) {
+    public WSClient(URI serverUri, Map<String, String> headers, MessageHandler messageHandler) {
         super(serverUri, headers);
+        this.messageHandler = messageHandler;
     }
 
     @Override
@@ -38,7 +42,7 @@ class WSClient extends WebSocketClient {
     @Override
     public void onMessage(String s) {
         JsonObject jsonObject = gson.fromJson(s, JsonObject.class);
-        MessageHandler.handle(jsonObject);
+        messageHandler.handle(jsonObject);
         Object toRemove = null;
         for (Map.Entry<String, ConsumerWithType<?>> entry : consumerMap.entrySet()) {
             if (jsonObject.get("echo") != null && entry.getKey().equals(jsonObject.get("echo").getAsString())) {
@@ -57,7 +61,7 @@ class WSClient extends WebSocketClient {
     @Override
     public void onError(Exception e) {
         if (!this.isOpen()) latch.countDown();
-        MessageHandler.postEvent(new WebsocketErrorEvent(e));
+        messageHandler.postEvent(new WebsocketErrorEvent(e));
         throw new RuntimeException(e);
     }
 

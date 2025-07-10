@@ -23,6 +23,7 @@ public class WebsocketBotClient implements BotClient {
     private WSClient client;
     private String accessToken;
     private Logger logger;
+    private final MessageHandler messageHandler = new MessageHandler();
 
     public static final Gson gson = new Gson();
 
@@ -44,12 +45,12 @@ public class WebsocketBotClient implements BotClient {
         this.accessToken = accessToken;
     }
 
-    public void connect() throws InterruptedException {
+    public void connect() {
         if (logger != null) logger.info("Connecting to the websocket server at " + uri);
         if (accessToken == null) {
-            client = new WSClient(uri);
+            client = new WSClient(uri, messageHandler);
         } else {
-            client = new WSClient(uri, MapUtil.of("Authorization", "Bearer " + accessToken));
+            client = new WSClient(uri, MapUtil.of("Authorization", "Bearer " + accessToken), messageHandler);
         }
         client.connect();
         try {
@@ -89,12 +90,12 @@ public class WebsocketBotClient implements BotClient {
 
     @Override
     public void registerEvent(Listener listener) {
-        MessageHandler.eventClassList.add(listener);
+        messageHandler.eventClassList.add(listener);
     }
 
     @Override
     public void unregisterEvent(Listener listener) {
-        MessageHandler.eventClassList.remove(listener);
+        messageHandler.eventClassList.remove(listener);
     }
 
     public boolean isConnected() {
@@ -104,10 +105,10 @@ public class WebsocketBotClient implements BotClient {
     @Override
     public void setLogger(Logger logger) {
         this.logger = logger;
-        MessageHandler.logger = logger;
+        messageHandler.logger = logger;
     }
 
     public List<Listener> getEventList() {
-        return MessageHandler.eventClassList;
+        return messageHandler.eventClassList;
     }
 }

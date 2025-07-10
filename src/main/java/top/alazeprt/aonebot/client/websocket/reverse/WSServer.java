@@ -26,13 +26,14 @@ class WSServer extends WebSocketServer {
     public CountDownLatch latch = new CountDownLatch(1);
 
     private String accessToken;
-
+    private final MessageHandler messageHandler;
     private Logger logger;
 
-    public WSServer(InetSocketAddress address, String accessToken, Logger logger) {
+    public WSServer(InetSocketAddress address, String accessToken, Logger logger, MessageHandler messageHandler) {
         super(address);
         this.accessToken = accessToken;
         this.logger = logger;
+        this.messageHandler = messageHandler;
     }
 
     @Override
@@ -49,7 +50,7 @@ class WSServer extends WebSocketServer {
     @Override
     public void onMessage(WebSocket webSocket, String s) {
         JsonObject jsonObject = gson.fromJson(s, JsonObject.class);
-        MessageHandler.handle(jsonObject);
+        messageHandler.handle(jsonObject);
         Object toRemove = null;
         for (Map.Entry<String, ConsumerWithType<?>> entry : consumerMap.entrySet()) {
             if (jsonObject.get("echo") != null && entry.getKey().equals(jsonObject.get("echo").getAsString())) {
