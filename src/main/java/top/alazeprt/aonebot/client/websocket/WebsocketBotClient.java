@@ -2,6 +2,7 @@ package top.alazeprt.aonebot.client.websocket;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.slf4j.Logger;
 import top.alazeprt.aonebot.action.Action;
 import top.alazeprt.aonebot.action.GetAction;
@@ -58,7 +59,7 @@ public class WebsocketBotClient implements BotClient {
             if (!isConnected()) throw new InterruptedException("Failed to connect to the websocket server after 10 seconds");
             client.latch.await();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
