@@ -52,8 +52,10 @@ public class WebsocketBotClient implements BotClient {
         } else {
             client = new WSClient(uri, MapUtil.of("Authorization", "Bearer " + accessToken), messageHandler);
         }
-        client.connect();
         try {
+            client.connect();
+            Thread.sleep(10000);
+            if (!isConnected()) throw new InterruptedException("Failed to connect to the websocket server after 10 seconds");
             client.latch.await();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
