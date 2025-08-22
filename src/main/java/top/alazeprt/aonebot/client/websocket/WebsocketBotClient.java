@@ -63,6 +63,23 @@ public class WebsocketBotClient implements BotClient {
         }
     }
 
+    public void connect(long timeout) {
+        if (logger != null) logger.info("Connecting to the websocket server at " + uri);
+        if (accessToken == null) {
+            client = new WSClient(uri, messageHandler);
+        } else {
+            client = new WSClient(uri, MapUtil.of("Authorization", "Bearer " + accessToken), messageHandler);
+        }
+        try {
+            client.connect();
+            Thread.sleep(timeout);
+            if (!isConnected()) throw new InterruptedException("Failed to connect to the websocket server after " + timeout / 1000.0 + " seconds");
+            client.latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void send(String data) {
         if (logger != null) logger.info("Sending data to the websocket server: " + data);
         if (client != null) {
