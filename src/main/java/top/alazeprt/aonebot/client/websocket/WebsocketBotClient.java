@@ -56,7 +56,10 @@ public class WebsocketBotClient implements BotClient {
         try {
             client.connect();
             Thread.sleep(10000);
-            if (!isConnected()) throw new InterruptedException("Failed to connect to the websocket server after 10 seconds");
+            if (!isConnected()) {
+                client.close();
+                throw new InterruptedException("Failed to connect to the websocket server after 10 seconds");
+            }
             client.latch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -73,7 +76,10 @@ public class WebsocketBotClient implements BotClient {
         try {
             client.connect();
             Thread.sleep(timeout);
-            if (!isConnected()) throw new InterruptedException("Failed to connect to the websocket server after " + timeout / 1000.0 + " seconds");
+            if (!isConnected()) {
+                client.close();
+                throw new InterruptedException("Failed to connect to the websocket server after " + timeout / 1000.0 + " seconds");
+            }
             client.latch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
